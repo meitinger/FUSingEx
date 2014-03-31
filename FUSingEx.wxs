@@ -1,0 +1,69 @@
+<?xml version="1.0" encoding="Windows-1252"?>
+<!--
+  Copyright (C) 2012, Manuel Meitinger
+  
+  This program is free software: you can redistribute it and/or modify
+  it under the terms of the GNU General Public License as published by
+  the Free Software Foundation, either version 2 of the License, or
+  (at your option) any later version.
+  
+  This program is distributed in the hope that it will be useful,
+  but WITHOUT ANY WARRANTY; without even the implied warranty of
+  MERCHANTABILITY or FITNESS FOR A PARTICULAR PURPOSE.  See the
+  GNU General Public License for more details.
+  
+  You should have received a copy of the GNU General Public License
+  along with this program.  If not, see <http://www.gnu.org/licenses/>.
+-->
+<?if $(var.Platform) = x86?>
+<?define SystemFolder = SystemFolder?>
+<?elseif $(var.Platform) = x64?>
+<?define SystemFolder = System64Folder?>
+<?else?>
+<?error Platform must either be x86 or x64.?>
+<?endif?>
+<Wix xmlns="http://schemas.microsoft.com/wix/2006/wi">
+  <Product Id="*" Name="$(var.Name) $(var.Major).$(var.Minor)" Language="1033" Version="$(var.Major).$(var.Minor).$(var.Build).$(var.Revision)" Manufacturer="Aufbauwerk der Jugend" UpgradeCode="6A4673CE5D04483BAF99B0EEDE07D26C" Codepage="1252">
+    <Package Id="*" Description="$(var.Description)" InstallerVersion="200" Compressed="yes" Platform="$(var.Platform)" InstallPrivileges="elevated" InstallScope="perMachine" />
+    <Media Id="1" Cabinet="FUSingEx.cab" EmbedCab="yes" CompressionLevel="high" />
+    <Property Id="ARPNOMODIFY" Value="1" />
+    <Property Id="ARPPRODUCTICON" Value="FUSingEx.ico" />
+    <Property Id="REBOOT" Value="Force" />
+    <MajorUpgrade AllowSameVersionUpgrades="yes" DowngradeErrorMessage="A newer version of $(var.Name) is already installed." />
+    <Condition Message="$(var.Name) only supports Windows XP Professional."><![CDATA[VersionNT = 501 AND NOT MsiNTSuitePersonal]]></Condition>
+    <?if $(var.Platform) = x86?>
+    <Condition Message="This installer is not supported on your computer. Please use the 64-bit installer to complete the $(var.Name) installation."><![CDATA[NOT VersionNT64]]></Condition>
+    <?endif?>
+    <Icon Id="FUSingEx.ico" SourceFile="FUSingEx.ico" />
+    <Directory Id="TARGETDIR" Name="SourceDir">
+      <Directory Id="$(var.SystemFolder)">
+        <Component Id="FUSingEx">
+          <File KeyPath="yes" Source="FUSingEx.dll" />
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Microsoft\Windows NT\CurrentVersion\Winlogon\Notify\FUSingEx">
+            <RegistryValue Name="Asynchronous" Value="0" Type="integer" />
+            <RegistryValue Name="Lock" Value="WinlogonEventLock" Type="string" />
+            <RegistryValue Name="Impersonate" Value="0" Type="integer" />
+            <RegistryValue Name="DllName" Value="FUSingEx.dll" Type="string" />
+          </RegistryKey>
+          <RegistryKey Root="HKLM" Key="SOFTWARE\Classes\CLSID\{2559a1f6-21d7-11d4-bdaf-00c04f60b9f0}">
+            <RegistryValue Value="$(var.Name)" Type="string" />
+            <RegistryValue Name="LocalizedString" Value="@msgina.dll,-8014" Type="string" />
+            <RegistryValue Name="InfoTip" Value="@msgina.dll,-8015" Type="string" />
+            <RegistryKey Key="DefaultIcon">
+              <RegistryValue Value="%SystemRoot%\system32\shell32.dll,-331" Type="expandable" />
+            </RegistryKey>
+            <RegistryKey Key="Instance\InitPropertyBag">
+              <RegistryValue Name="Command" Value="@msgina.dll,-8014" Type="string" />
+              <RegistryValue Name="Param1" Value="FUSingEx.dll,RundllOEMLink" Type="string" />
+              <RegistryValue Name="Param2" Value="rundll32.exe" Type="string" />
+            </RegistryKey>
+          </RegistryKey>
+          <RegistryValue Root="HKLM" Key="SOFTWARE\Microsoft\Windows\CurrentVersion\Explorer\StartMenu\StartPanel\ShowOEMLink" Name="NoOEMLinkInstalled" Value="0" Type="integer" />
+        </Component>
+      </Directory>
+    </Directory>
+    <Feature Id="FUSingEx" Level="1" AllowAdvertise="no">
+      <ComponentRef Id="FUSingEx" />
+    </Feature>
+  </Product>
+</Wix>
