@@ -6,17 +6,18 @@ Description
 -----------
 Contrary to popular belief it is possible for *Windows XP* to support fast user
 switching on domain-joined clients, not out-of-the-box though.
-The trick is disconnect the session when it gets locked, which will display the
-logon dialog instead of the lock screen and is precisely what the program does.
-In addition it uses the [OEM link](http://support.microsoft.com/kb/555437) to
-display an icon that allows users to switch.
+The trick is to disconnect the session when it gets locked, which will display
+the logon dialog instead of the lock screen and is precisely what the program
+does. In addition, the [OEM link](http://support.microsoft.com/kb/555437) is
+used to display an icon that allows users to switch and with a localized hint
+text.
 
 Build
 -----
-In order to build every target you need [WiX](http://wixtoolset.org/) and the
-usual build environment that comes with Microsoft Visual Studio. Simply run
-`nmake` which will compile that the source and assemble a *Windows Installer*
-package in `bin\Debug`.
+In order to build every target you'll need [WiX](http://wixtoolset.org/) and
+the usual build environment that comes with *Visual Studio*. Simply run `nmake`
+which will compile the source and assemble a *Windows Installer* package in
+`bin\Debug`.
 To build a signed release package run `nmake Configuration=Release`. (A code
 signing certificate needs to be installed.)
 
